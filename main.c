@@ -5,6 +5,18 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+void remove_whitespace(char* str)
+{
+    for (int i = 0; i < strlen(str); ++i)
+    {
+        if (isspace(str[i]) && str[i + 1] != '\0')
+        {
+            memmove(&str[i], &str[i + 1], sizeof(char) * (strlen(str) - i + 1));
+            --i;
+        }
+    }
+}
+
 char* read_file(const char* path)
 {
     FILE* fp = fopen(path, "r");
@@ -26,6 +38,9 @@ char* read_file(const char* path)
     {
         unsigned long prev_len = strlen(contents);
         contents = realloc(contents, (strlen(contents) + read) * sizeof(char));
+
+        remove_whitespace(line);
+        read = strlen(line);
 
         memcpy(&contents[prev_len], line, (read - 1) * sizeof(char));
         contents[prev_len + read - 1] = '\0';
